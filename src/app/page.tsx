@@ -1,4 +1,3 @@
-// pages/index.tsx
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -7,12 +6,12 @@ import { FaSpinner } from 'react-icons/fa'
 import { Wand2 } from 'lucide-react'
 import { VoiceRecorder } from '../components/VoiceRecorder'
 import { TranscriptionDisplay } from '@/components/TranscriptionDisplay'
-import { TemplateSelector } from '@/components/TemplateSelector'
+//import { TemplateSelector } from '@/components/TemplateSelector'
 import { useUser } from '@clerk/nextjs'
 import { Caveat, Fredoka } from 'next/font/google'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
-
+import { saveAs } from 'file-saver'
 const caveat = Caveat({ subsets: ['latin'] })
 const fredoka = Fredoka({ subsets: ['latin'] })
 
@@ -55,57 +54,49 @@ export default function Home() {
     setTranscription(newTranscription)
   }, [])
 
-  const handleTemplateSelect = useCallback((templateId: number) => {
+  /* const handleTemplateSelect = useCallback((templateId: number) => {
     setSelectedTemplate(templateId)
-  }, [])
+  }, []) */
 
   const handleRecordingStart = useCallback(() => {
     setTranscription(''); // Clear the transcription when recording starts
   }, []);
 
   const handleAnalyzeTranscription = useCallback(async () => {
-    if (!transcription || selectedTemplate !== 1) return
+    if (!transcription) {
+      toast.error('Please provide a transcription first');
+      return;
+    }
 
-    setIsAnalyzing(true)
+    setIsAnalyzing(true);
 
     try {
-      const response = await fetch('/api/analyze', {
+      const docResponse = await fetch('/api/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          transcription: transcription,
-          formType: 'nurseForm1'
+          transcript: transcription,
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error('Analysis failed')
+      if (!docResponse.ok) {
+        const errorData = await docResponse.json();
+        throw new Error(errorData.details || 'Failed to generate report');
+      }
 
-      const data = await response.json()
+      const blob = await docResponse.blob();
+      saveAs(blob, 'medical-legal-report.docx');
+      toast.success('Report generated successfully');
       
-      const storeResponse = await fetch('/api/store-form-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formData: data,
-          template: selectedTemplate
-        }),
-      })
-
-      if (!storeResponse.ok) throw new Error('Failed to store form data')
-
-      const { id } = await storeResponse.json()
-
-      router.push(`/populated-form/${id}`)
     } catch (error) {
-      console.error('Content generation error:', error)
+      console.error('Content generation error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to generate report');
     } finally {
-      setIsAnalyzing(false)
+      setIsAnalyzing(false);
     }
-  }, [transcription, selectedTemplate, router])
+  }, [transcription]);
 
 
 
@@ -147,18 +138,18 @@ export default function Home() {
               transcription={transcription}
               onTranscriptionChange={handleTranscriptionChange}
             />
-            <TemplateSelector 
+            {/* <TemplateSelector 
               onTemplateSelect={handleTemplateSelect}
-            />
+            /> */}
             <div className="flex justify-center">
               <button 
                 onClick={handleAnalyzeTranscription}
                 className={`px-6 py-3 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                  selectedTemplate === 1 && !isAnalyzing
+                    !isAnalyzing
                     ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white hover:from-teal-500 hover:to-blue-600 focus:ring-teal-300' 
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
-                disabled={selectedTemplate !== 1 || isAnalyzing}
+                disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
                   <>
