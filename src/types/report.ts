@@ -1,113 +1,121 @@
-// types/report.ts
+// src/types/report.ts
 export interface MedicalLegalReport {
-    header: {
-      examiner: {
-        name: string;
-        credentials: string;
-      };
-      observer: {
-        name: string;
-        credentials: string;
-      };
-      specialty: string;
-      location: string;
-      interpreter?: {
-        name: string;
-        certification: string;
-        expiration: string;
-      };
-      times: {
-        history: {
-          duration: string;
-          timeRange: string;
+    header?: {
+      examiner?: string;
+      observer?: string;
+      date?: string;
+      specialty?: string;
+      location?: string;
+      interpreter?: string;
+      times?: {
+        history?: {
+          duration?: string;
+          timeRange?: string; // HH:MM-HH:MM
         };
-        physicalExam: {
-          duration: string;
-          timeRange: string;
+        physical_exam?: {
+          duration?: string;
+          timeRange?: string; // HH:MM-HH:MM
         };
-        totalTime: {
-          duration: string;
-          timeRange: string;
+        total_time?: {
+          duration?: string;
+          timeRange?: string; // HH:MM-HH:MM
         };
       };
-      recordingNote: string;
+      audio_recording_status?: string;
+      special_conditions?: string;
     };
-    timeline: Array<{
-      time: string;
-      event: string;
+  
+    chronological_timeline?: Array<{
+      time?: string; // HH:MM
+      event?: string;
       details?: string;
     }>;
-    history: {
-      generalInfo: {
-        demographics: Record<string, string>;
-        identification: string;
+  
+    history_section?: {
+      general_information?: {
+        demographics?: string;
+        hand_dominance?: string;
+        id_verification?: string;
       };
-      currentSymptoms: Array<{
-        region: string;
-        pain: {
-          level: number;
-          characteristics: string[];
-          frequency: string;
-          triggers?: string[];
-          alleviatingFactors?: string[];
-        };
-        functionalImpact: string[];
-        treatments: string[];
+      current_symptoms?: Array<{
+        body_region?: string;
+        pain_level?: number;
+        characteristics?: string;
+        frequency?: string;
+        duration?: string;
+        triggers?: string[];
+        associated_symptoms?: string[];
+        treatments?: string[];
+        daily_impact?: string[];
       }>;
-      medications: Array<{
-        name: string;
-        dosage: string;
-        frequency: string;
-        purpose?: string;
+      medications?: Array<{
+        name?: string;
+        dosage?: string;
+        frequency?: string;
+        type?: string; // prescription/non-prescription
       }>;
-      treatmentHistory: {
-        currentProviders: Array<{
-          name: string;
-          specialty: string;
-          lastVisit: string;
-          nextVisit?: string;
+      treatment_history?: {
+        current_providers?: Array<{
+          name?: string;
+          recent_appointments?: string;
+          planned_treatments?: string;
         }>;
-        pastTreatments: string[];
-        plannedTreatments?: string[];
+        past_procedures?: string[];
       };
-      functionalAssessment: {
-        sleep: {
-          pattern: string;
-          issues: string[];
-          aids?: string[];
-        };
-        adl: {
-          independent: string[];
-          needsAssistance: string[];
-          unable: string[];
-        };
-        mobility: string;
-        work: string;
+      functional_assessment?: {
+        sleep_patterns?: string;
+        daily_activities?: string[];
+        work_status?: string;
+        support_needed?: string;
+        mobility_status?: string;
       };
     };
-    physicalExam: Array<{
-      section: string;
-      position: string;
-      tests: Array<{
-        name: string;
-        instructions: string;
-        performance: string;
-        painResponse?: string;
-        measurements?: Record<string, number | string>;
+  
+    physical_examination?: Array<{
+      body_region?: string;
+      starting_position?: string;
+      tests?: Array<{
+        name?: string;
+        instructions?: string;
+        performance?: string;
+        pain_response?: string;
+        measurements?: {
+          value?: number;
+          unit?: string;
+        };
       }>;
     }>;
-    measurements: {
-      grip: Record<string, number[]>;
-      circumference: Record<string, Record<string, number>>;
-      rangeOfMotion: Record<string, Record<string, number>>;
-    };
-    additionalObservations: string[];
-    execution: {
-      date: string;
-      location: string;
-      observer: {
-        name: string;
-        credentials: string;
+  
+    measurements?: {
+      grip_strength?: {
+        left?: number[];
+        right?: number[];
+      };
+      circumference?: {
+        location?: string;
+        value?: number;
+        unit?: string;
+      };
+      range_of_motion?: {
+        joint?: string;
+        degrees?: number;
       };
     };
-  }
+  
+    additional_observations?: {
+      measurement_notes?: string[];
+      limitations?: string[];
+      patient_positioning?: string[];
+      omissions?: string[];
+    };
+  
+    closing?: {
+      attestation?: string;
+      execution_date?: string;
+      execution_location?: string;
+      examiner_signature?: {
+        name?: string;
+        credentials?: string;
+      };
+  };
+}
