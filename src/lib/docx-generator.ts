@@ -285,6 +285,142 @@ import {
       });
     }
 
+    if (historySection?.medications && historySection.medications.length > 0) {
+      paragraphs.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          children: [new TextRun({ text: 'Medications', bold: true })]
+        })
+      );
+
+      historySection.medications.forEach(med => {
+        const medDetails = [
+          med.name && `${med.name}`,
+          med.dosage && `${med.dosage}`,
+          med.frequency && `${med.frequency}`,
+          med.type && `(${med.type})`
+        ].filter(Boolean).join(' ');
+
+        if (medDetails) {
+          paragraphs.push(
+            new Paragraph({
+              children: [new TextRun({ text: `• ${medDetails}` })]
+            })
+          );
+        }
+      });
+    }
+
+    if (historySection?.treatment_history) {
+      paragraphs.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          children: [new TextRun({ text: 'Treatment History', bold: true })]
+        })
+      );
+
+      if (historySection.treatment_history.current_providers && historySection.treatment_history.current_providers.length > 0) {
+        paragraphs.push(
+          new Paragraph({
+            children: [new TextRun({ text: 'Current Providers:', bold: true })]
+          })
+        );
+
+        historySection.treatment_history.current_providers.forEach(provider => {
+          if (provider.name) {
+            paragraphs.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `• ${provider.name}` }),
+                  ...(provider.recent_appointments ? [new TextRun({ text: ` - Appointments: ${provider.recent_appointments}` })] : []),
+                  ...(provider.planned_treatments ? [new TextRun({ text: ` - Planned: ${provider.planned_treatments}` })] : [])
+                ]
+              })
+            );
+          }
+        });
+      }
+
+      if (historySection.treatment_history.past_procedures && historySection.treatment_history.past_procedures.length > 0) {
+        paragraphs.push(
+          new Paragraph({
+            children: [new TextRun({ text: 'Past Procedures:', bold: true })]
+          }),
+          ...historySection.treatment_history.past_procedures.map(procedure =>
+            new Paragraph({
+              children: [new TextRun({ text: `• ${procedure}` })]
+            })
+          )
+        );
+      }
+    }
+
+    if (historySection?.functional_assessment) {
+      paragraphs.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          children: [new TextRun({ text: 'Functional Assessment', bold: true })]
+        })
+      );
+
+      const assessment = historySection.functional_assessment;
+
+      if (assessment.sleep_patterns) {
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: 'Sleep Patterns: ', bold: true }),
+              new TextRun({ text: assessment.sleep_patterns })
+            ]
+          })
+        );
+      }
+
+      if (assessment.daily_activities && assessment.daily_activities.length > 0) {
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: 'Daily Activities: ', bold: true }),
+              new TextRun({ text: assessment.daily_activities.join(', ') })
+            ]
+          })
+        );
+      }
+
+      if (assessment.work_status) {
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: 'Work Status: ', bold: true }),
+              new TextRun({ text: assessment.work_status })
+            ]
+          })
+        );
+      }
+
+      if (assessment.support_needed) {
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: 'Support Needed: ', bold: true }),
+              new TextRun({ text: assessment.support_needed })
+            ]
+          })
+        );
+      }
+
+      if (assessment.mobility_status) {
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: 'Mobility Status: ', bold: true }),
+              new TextRun({ text: assessment.mobility_status })
+            ]
+          })
+        );
+      }
+    }
+
     return paragraphs;
   }
   
