@@ -510,7 +510,36 @@ import {
       }
     }
 
-    // Add other measurement sections as needed
+    if (measurements?.circumference) {
+      paragraphs.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          children: [new TextRun({ text: 'Circumference', bold: true })]
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${measurements.circumference.location}: ` }),
+            new TextRun({ text: `${measurements.circumference.value}${measurements.circumference.unit}` })
+          ]
+        })
+      );
+    }
+
+    if (measurements?.range_of_motion) {
+      paragraphs.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          children: [new TextRun({ text: 'Range of Motion', bold: true })]
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${measurements.range_of_motion.joint}: ` }),
+            new TextRun({ text: `${measurements.range_of_motion.degrees}°` })
+          ]
+        })
+      );
+    }
+
     return paragraphs;
   }
   
