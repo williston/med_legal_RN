@@ -153,7 +153,7 @@ const startRecording = useCallback(async () => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
   }
 
-  const MAX_RECORDING_TIME = 300 // 5 minutes in seconds
+  const MAX_RECORDING_TIME = 600 // 10 minutes in seconds
 
   useEffect(() => {
     if (timer >= MAX_RECORDING_TIME) {
