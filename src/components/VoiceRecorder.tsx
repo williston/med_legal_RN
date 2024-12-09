@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { Mic, Square, Pause, Play } from 'lucide-react'
+import { Mic, Square, Pause, Play, Upload } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface VoiceRecorderProps {
@@ -162,6 +162,49 @@ const startRecording = useCallback(async () => {
     }
   }, [timer, stopRecording])
 
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Add immediate feedback that the function is called
+    console.log('Upload button clicked');
+    toast.success('Upload button clicked');
+
+    const file = event.target.files?.[0];
+    if (!file) {
+      console.log('No file selected');
+      toast.error('No file selected');
+      return;
+    }
+
+    console.log('File selected:', { 
+      name: file.name, 
+      type: file.type, 
+      size: file.size 
+    });
+
+    // Check if file is audio
+    if (!file.type.startsWith('audio/')) {
+      toast.error('Please upload an audio file');
+      return;
+    }
+
+    // Check file size (e.g., 25MB limit)
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error('File size must be less than 25MB');
+      return;
+    }
+
+    try {
+      console.log('Sending file to onAudioRecorded');
+      onAudioRecorded(file);
+      toast.success('Audio file uploaded successfully');
+    } catch (error) {
+      console.error('File upload error:', error);
+      toast.error('Failed to process audio file');
+    }
+
+    // Clear the input so the same file can be uploaded again
+    event.target.value = '';
+  }, [onAudioRecorded]);
+
   return (
     <div>
       <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -225,6 +268,29 @@ const startRecording = useCallback(async () => {
               )}
             </button>
           )}
+
+          <div className="relative">
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="audio-upload"
+            />
+            <label
+              htmlFor="audio-upload"
+              className={cn(
+                "w-12 h-12 flex items-center justify-center cursor-pointer",
+                "bg-teal-500 hover:bg-teal-600",
+                "transition-all duration-300 ease-in-out transform hover:scale-105",
+                "rounded-full shadow-lg",
+                "border-4 border-white",
+                "focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-teal-300"
+              )}
+            >
+              <Upload className="w-6 h-6 text-white" />
+            </label>
+          </div>
         </div>
       </div>
     </div>

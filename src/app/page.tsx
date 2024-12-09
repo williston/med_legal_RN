@@ -23,13 +23,22 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   const handleAudioRecorded = useCallback(async (audioBlob: Blob) => {
+    console.log('handleAudioRecorded called with:', {
+      type: audioBlob.type,
+      size: audioBlob.size
+    });
+
     const formData = new FormData();
-    console.log('Sending audio blob type:', audioBlob.type);
-    console.log('Sending audio blob size:', audioBlob.size);
     
-    formData.append('file', audioBlob, audioBlob.type.includes('mp4') ? 'audio.mp4' : 'audio.webm');
+    // Determine file extension based on MIME type
+    const fileExtension = audioBlob.type.includes('mp4') ? '.mp4' : 
+                         audioBlob.type.includes('mpeg') ? '.mp3' : 
+                         audioBlob.type.includes('wav') ? '.wav' : '.webm';
+    
+    formData.append('file', audioBlob, `audio${fileExtension}`);
   
     try {
+      console.log('Sending request to /api/transcribe');
       const response = await fetch('/api/transcribe', {
         method: 'POST',
         body: formData,
@@ -39,13 +48,15 @@ export default function Home() {
       
       if (!response.ok) {
         console.error('Transcription failed:', data);
-        alert(`Transcription failed: ${data.details?.message || 'Unknown error'}`);
+        toast.error(`Transcription failed: ${data.details?.message || 'Unknown error'}`);
         return;
       }
   
       console.log('Transcription successful:', data);
       setTranscription(data.transcription);
+      toast.success('Audio transcribed successfully');
     } catch (error) {
+      console.error('Transcription error:', error);
       toast.error('Failed to transcribe audio')
     }
   }, []);
