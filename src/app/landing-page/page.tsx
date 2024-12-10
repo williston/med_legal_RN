@@ -28,13 +28,13 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h1 className="text-5xl md:text-6xl font-bold text-teal-700 leading-tight">
-              Master Your 
+              Streamline Your 
               <span className={`block ${caveat.className} text-blue-600`}>
-                SBAR Communication
+                Medical Legal Documentation
               </span>
             </h1>
             <p className="text-xl text-gray-600">
-              Practice and perfect your clinical handoffs with our AI-powered SBAR training tool. Record your reports naturally and receive structured feedback.
+              Transform your clinical observations into comprehensive medical legal reports with our AI-powered assistant. Record naturally and generate structured documentation.
             </p>
             <div className="flex gap-4">
               <SignInButton mode="modal">
@@ -54,11 +54,11 @@ export default function Landing() {
             <div className="flex items-center gap-6 text-gray-500">
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                <span>Training Environment</span>
+                <span>Secure Environment</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Instant Feedback</span>
+                <span>Structured Reports</span>
               </div>
             </div>
           </div>
@@ -85,23 +85,23 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-12">
             <h2 className="text-3xl font-bold text-teal-700">
-              Practice Makes Perfect
+              Efficient Documentation
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <FeatureCard 
                 icon={<Clock />}
-                title="Safe Learning"
-                description="Practice SBAR without using real patient information"
+                title="Time-Saving"
+                description="Convert verbal observations into structured reports quickly"
               />
               <FeatureCard 
                 icon={<FileText />}
-                title="Structured Feedback"
-                description="Get instant analysis of your SBAR format and content"
+                title="Standardized Format"
+                description="Generate consistent, professionally formatted documentation"
               />
               <FeatureCard 
                 icon={<Brain />}
-                title="AI-Powered Learning"
-                description="Receive smart suggestions to improve your communication"
+                title="AI-Enhanced"
+                description="Smart analysis ensures comprehensive coverage of key details"
               />
             </div>
           </div>
@@ -113,18 +113,18 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-center text-teal-700 mb-12">
-              Loved by Nursing Students & Educators
+              Trusted by Healthcare Professionals
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               <TestimonialCard 
-                quote="Perfect for practicing SBAR before clinical rotations. It helped build my confidence in giving handoff reports."
-                author="Sarah K."
-                role="Nursing Student"
+                quote="This tool has revolutionized how I document my medical legal observations. The voice-to-text feature saves hours of typing."
+                author="Dr. Sarah K."
+                role="Medical Legal Consultant"
               />
               <TestimonialCard 
-                quote="An excellent tool for teaching structured communication. Students can practice repeatedly in a safe environment."
+                quote="The structured format ensures I never miss critical details in my documentation. It's become an essential part of my workflow."
                 author="Michael R."
-                role="Clinical Nursing Instructor"
+                role="Healthcare Legal Advisor"
               />
             </div>
           </div>
@@ -135,9 +135,9 @@ export default function Landing() {
       <section className="bg-gradient-to-r from-teal-500 to-blue-500 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white space-y-8">
-            <h2 className="text-3xl font-bold">Join Our Educational Beta Program</h2>
+            <h2 className="text-3xl font-bold">Join Our Professional Beta Program</h2>
             <p className="text-xl">
-              Perfect for nursing schools and healthcare education programs. Get special academic pricing during our beta period.
+              Ideal for medical practices and healthcare organizations. Access premium features during our beta period.
             </p>
             <form className="flex gap-4 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
               <input 

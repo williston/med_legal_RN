@@ -15,9 +15,8 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
   const timerRef = useRef<NodeJS.Timeout>();
 
   const helpText = {
-    recording: 'Click to start recording your verbal report',
-    template: 'Select the appropriate form template for your needs',
-    analysis: 'AI will structure your recording into the selected template'
+    recording: 'Click to start recording your medical legal observations',
+    analysis: 'AI will structure your recording into a professional report format'
   }
 
   const handleMouseEnter = () => {
@@ -57,7 +56,7 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
           onMouseEnter={handleMouseEnter}
         >
           <FileText className="w-6 h-6 text-teal-600 mr-2" />
-          <h2 className="text-2xl font-bold text-teal-700">Transcription</h2>
+          <h2 className="text-2xl font-bold text-teal-700">Medical Legal Documentation</h2>
         </div>
 
         {/* Popup */}
@@ -79,10 +78,10 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
             </button>
             <div className="bg-teal-50 rounded-lg p-4">
               <h3 className="text-lg font-bold text-teal-700 mb-2">
-                Assessment Instructions
+                Documentation Instructions
               </h3>
               <p className="font-serif text-lg text-gray-500">
-                Record your assessment using the recorder above or type/copy paste in your nursing assessment.
+                Record or type your medical legal observations. Focus on objective findings and relevant details for legal documentation.
               </p>
             </div>
           </div>
@@ -93,7 +92,7 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
         value={transcription}
         onChange={(e) => onTranscriptionChange(e.target.value)}
         className="w-full min-h-[12rem] p-4 border-4 border-white rounded-tl-2xl rounded-br-2xl font-serif text-lg text-gray-700 bg-white shadow-inner focus:ring-4 focus:ring-teal-300 focus:border-teal-500 transition-all duration-300 ease-in-out"
-        placeholder="Transcription will appear here..."
+        placeholder="Your medical legal documentation will appear here..."
       />
       <div className="absolute bottom-3 right-3 text-sm text-gray-400">
         {transcription.length} characters

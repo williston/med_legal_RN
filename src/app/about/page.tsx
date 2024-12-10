@@ -14,10 +14,10 @@ export default function About() {
           {/* Hero Section */}
           <div className="text-center space-y-4">
             <h1 className={`text-4xl md:text-5xl font-bold text-teal-700 ${caveat.className}`}>
-              About SBAR Voice Assistant
+              About Medical Legal Documentation Assistant
             </h1>
             <p className="text-lg text-gray-600">
-              Transforming verbal nursing reports into structured clinical documentation
+              Converting clinical observations into comprehensive medical legal documentation
             </p>
           </div>
 
@@ -25,23 +25,23 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-8">
             <FeatureCard
               icon={<Mic className="w-8 h-8 text-teal-500" />}
-              title="Voice-First Approach"
-              description="Record your patient reports naturally using voice, saving valuable time during busy shifts."
+              title="Voice-First Documentation"
+              description="Record your observations naturally, saving valuable time during assessments."
             />
             <FeatureCard
               icon={<Brain className="w-8 h-8 text-teal-500" />}
               title="AI-Powered Analysis"
-              description="Advanced AI technology converts your voice recordings into structured clinical documentation."
+              description="Advanced AI technology structures your recordings into comprehensive legal documentation."
             />
             <FeatureCard
               icon={<FileText className="w-8 h-8 text-teal-500" />}
-              title="Multiple Templates"
-              description="Support for various nursing documentation formats, including detailed assessment forms."
+              title="Professional Templates"
+              description="Support for various medical legal documentation formats and requirements."
             />
             <FeatureCard
               icon={<Stethoscope className="w-8 h-8 text-teal-500" />}
-              title="Clinical Focus"
-              description="Designed specifically for healthcare professionals, with medical terminology support."
+              title="Healthcare Focused"
+              description="Designed specifically for medical legal documentation needs."
             />
           </div>
 
@@ -51,31 +51,21 @@ export default function About() {
             <ol className="space-y-4">
               <li className="flex items-start">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 mr-4">1</span>
-                <p>Record your patient report using the voice recorder</p>
+                <p>Record your clinical observations using the voice recorder</p>
               </li>
               <li className="flex items-start">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 mr-4">2</span>
-                <p>Select your preferred documentation template</p>
+                <p>Review and edit the AI-generated transcription</p>
               </li>
               <li className="flex items-start">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 mr-4">3</span>
-                <p>AI analyzes your recording and structures the information</p>
+                <p>Generate a structured medical legal report</p>
               </li>
               <li className="flex items-start">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 mr-4">4</span>
-                <p>Review and edit the generated documentation</p>
+                <p>Download and use your professional documentation</p>
               </li>
             </ol>
-          </div>
-
-          {/* Benefits Section */}
-          <div className="text-center space-y-6">
-            <h2 className="text-2xl font-bold text-teal-700">Benefits</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <BenefitCard title="Save Time" description="Reduce documentation time by up to 50%" />
-              <BenefitCard title="Reduce Errors" description="Structured format ensures consistent documentation" />
-              <BenefitCard title="Improve Care" description="More time for direct patient care" />
-            </div>
           </div>
         </div>
       </main>

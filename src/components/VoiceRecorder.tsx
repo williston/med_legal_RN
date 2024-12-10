@@ -225,7 +225,7 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
   return (
     <div>
       <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <h3 className="font-bold text-gray-800 mb-2">Audio Requirements</h3>
+        <h3 className="font-bold text-gray-800 mb-2">Recording Requirements</h3>
         <ul className="text-sm text-gray-700 space-y-1">
           <li>• Supported formats: MP3, WAV, WebM</li>
           <li>• Maximum file size: 25MB</li>
@@ -240,9 +240,9 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
       <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
         <h3 className="font-bold text-yellow-800">Important Notice</h3>
         <p className="text-sm text-yellow-700">
-          This tool is for educational and training purposes only. 
-          DO NOT include any patient identifiers or protected health information:
-          • No names, ages, or dates of birth
+          This tool is for professional documentation purposes. 
+          DO NOT include any protected health information (PHI):
+          • No patient names, ages, or dates of birth
           • No room numbers or locations
           • No specific medical record details
           • No unique identifying characteristics

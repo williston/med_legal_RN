@@ -119,26 +119,17 @@ export default function Home() {
             {user && (
               <>
                 <h2 className={`text-3xl text-teal-600 text-center ${caveat.className} animate-fade-in-down`}>
-                  Hi, {user.firstName || user.username || 'there'}!
+                  Welcome, {user.firstName || user.username || 'there'}!
                 </h2>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                  <Link 
-                    href="https://www.med.unc.edu/medclerk/education/grading/history-and-physical-examination-h-p-examples/"
-                    target="_blank"
-                    rel="noreferrer"
-                    referrerPolicy="no-referrer"
-                    className="text-blue-800 hover:text-blue-600 underline text-base font-medium"
-                  >
-                    Practice Data →
-                  </Link>
-                </div>
               </>
             )}
           </div>
-          <h1 className="text-4xl font-bold mb-8 text-teal-700 text-center animate-fade-in-up">SBAR Practice & Learning Tool</h1>
+          <h1 className="text-4xl font-bold mb-8 text-teal-700 text-center animate-fade-in-up">
+            Medical Legal Documentation Assistant
+          </h1>
           <p className="text-gray-600">
-            Practice structured clinical communication using simulated scenarios. 
-            Perfect your SBAR technique without using real patient information.
+            Create professional medical legal documentation efficiently. 
+            Record or type your observations and let AI help structure your report.
           </p>
           <div className="space-y-8">
             <VoiceRecorder 
