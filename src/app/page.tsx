@@ -53,7 +53,7 @@ export default function Home() {
       }
   
       console.log('Transcription successful:', data);
-      setTranscription(data.transcription);
+      setTranscription((prevTranscription) => prevTranscription + '\n' + data.transcription);
       toast.success('Audio transcribed successfully');
     } catch (error) {
       console.error('Transcription error:', error);
