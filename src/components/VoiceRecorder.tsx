@@ -23,73 +23,84 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
   const [processingState, setProcessingState] = useState<'idle' | 'compressing' | 'transcribing'>('idle');
   const [compressionProgress, setCompressionProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const ACCEPTED_TYPES = ['audio/mp3', 'audio/wav', 'audio/mpeg', 'audio/webm'];
+  const [estimatedTime, setEstimatedTime] = useState<number>(0);
 
-  // VoiceRecorder.tsx
-const startRecording = useCallback(async () => {
-  try {
-    onRecordingStart?.();
-    
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        sampleRate: 44100,
-      }
-    });
-    
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    let mimeType;
-
-    if (isIOS) {
-      if (MediaRecorder.isTypeSupported('audio/mp4;codecs=mp4a.40.2')) {
-        mimeType = 'audio/mp4;codecs=mp4a.40.2';
-      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-        mimeType = 'audio/mp4';
-      } else {
-        mimeType = 'audio/mp4';
-      }
-    } else {
-      mimeType = 'audio/webm';
+  const validateFile = (file: File): string | null => {
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      return 'Invalid file type. Please upload an audio file (MP3, WAV, or WebM)';
     }
+    if (file.size > 25 * 1024 * 1024) {
+      return 'File too large. It will be compressed automatically';
+    }
+    return null;
+  };
 
-    console.log('Using MIME type:', mimeType);
-
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType,
-      audioBitsPerSecond: 128000
-    });
-    
-    mediaRecorderRef.current = mediaRecorder;
-    audioChunksRef.current = [];
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        audioChunksRef.current.push(event.data);
-      }
-    };
-
-    mediaRecorder.onstop = () => {
-      const finalBlob = new Blob(audioChunksRef.current, { type: mimeType });
+  const startRecording = useCallback(async () => {
+    try {
+      onRecordingStart?.();
       
-      // Create a named file with explicit mp4 extension for iOS
-      const fileName = isIOS ? 'recording.mp4' : 'recording.webm';
-      const file = new File([finalBlob], fileName, {
-        type: mimeType,
-        lastModified: Date.now()
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        }
       });
       
-      console.log('Created file:', { name: file.name, type: file.type, size: file.size });
-      onAudioRecorded(file);
-    };
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      let mimeType;
 
-    mediaRecorder.start(1000); // Smaller chunks for iOS
-    setIsRecording(true);
-    setIsPaused(false);
-  } catch (error: unknown) {
-    console.error('Recording error:', error);
-    alert('Recording error: ' + (error instanceof Error ? error.message : 'Unknown error'));
-  }
-}, [onAudioRecorded, onRecordingStart]);
+      if (isIOS) {
+        if (MediaRecorder.isTypeSupported('audio/mp4;codecs=mp4a.40.2')) {
+          mimeType = 'audio/mp4;codecs=mp4a.40.2';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        } else {
+          mimeType = 'audio/mp4';
+        }
+      } else {
+        mimeType = 'audio/webm';
+      }
+
+      console.log('Using MIME type:', mimeType);
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType,
+        audioBitsPerSecond: 128000
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const finalBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        
+        // Create a named file with explicit mp4 extension for iOS
+        const fileName = isIOS ? 'recording.mp4' : 'recording.webm';
+        const file = new File([finalBlob], fileName, {
+          type: mimeType,
+          lastModified: Date.now()
+        });
+        
+        console.log('Created file:', { name: file.name, type: file.type, size: file.size });
+        onAudioRecorded(file);
+      };
+
+      mediaRecorder.start(1000); // Smaller chunks for iOS
+      setIsRecording(true);
+      setIsPaused(false);
+    } catch (error: unknown) {
+      console.error('Recording error:', error);
+      alert('Recording error: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
+  }, [onAudioRecorded, onRecordingStart]);
 
   const pauseRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
@@ -167,13 +178,25 @@ const startRecording = useCallback(async () => {
     }
   }, [timer, stopRecording])
 
+  const calculateEstimatedTime = (fileSize: number) => {
+    const estimatedSeconds = Math.ceil(fileSize / (1024 * 1024) * 2);
+    setEstimatedTime(estimatedSeconds);
+  };
+
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const error = validateFile(file);
+    if (error) {
+      toast.error(error);
+    }
+
     setSelectedFile(file);
+    calculateEstimatedTime(file.size);
 
     try {
-      let processedFile = file;  // Initialize variable
+      let processedFile = file;
       
       if (file.size > 25 * 1024 * 1024) {
         setProcessingState('compressing');
@@ -195,11 +218,25 @@ const startRecording = useCallback(async () => {
       setProcessingState('idle');
       setCompressionProgress(0);
       event.target.value = '';
+      setEstimatedTime(0);
     }
   }, [onAudioRecorded]);
 
   return (
     <div>
+      <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <h3 className="font-bold text-gray-800 mb-2">Audio Requirements</h3>
+        <ul className="text-sm text-gray-700 space-y-1">
+          <li>• Supported formats: MP3, WAV, WebM</li>
+          <li>• Maximum file size: 25MB</li>
+          <li>• Files over 25MB will be automatically compressed</li>
+          {selectedFile && (
+            <li className="text-blue-600">
+              Selected file: {selectedFile.name} ({(selectedFile.size / (1024 * 1024)).toFixed(2)}MB)
+            </li>
+          )}
+        </ul>
+      </div>
       <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
         <h3 className="font-bold text-yellow-800">Important Notice</h3>
         <p className="text-sm text-yellow-700">
@@ -312,6 +349,11 @@ const startRecording = useCallback(async () => {
               )}
             </span>
           </div>
+          {estimatedTime > 0 && (
+            <div className="text-sm text-gray-600 mt-2">
+              Estimated time remaining: ~{estimatedTime} seconds
+            </div>
+          )}
         </div>
       )}
       
