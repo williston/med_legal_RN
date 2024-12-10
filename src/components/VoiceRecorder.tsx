@@ -20,6 +20,9 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
   const streamRef = useRef<MediaStream | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [processingState, setProcessingState] = useState<'idle' | 'compressing' | 'transcribing'>('idle');
+  const [compressionProgress, setCompressionProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // VoiceRecorder.tsx
 const startRecording = useCallback(async () => {
@@ -166,57 +169,31 @@ const startRecording = useCallback(async () => {
 
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) {
-      toast.error('No file selected');
-      return;
-    }
-
-    if (!file.type.startsWith('audio/')) {
-      toast.error('Please upload an audio file');
-      return;
-    }
+    if (!file) return;
+    setSelectedFile(file);
 
     try {
-      setIsProcessing(true);
-      let compressedBlob = file;
-
-      // Log original file details
-      console.log('Original file details:', {
-        name: file.name,
-        type: file.type,
-        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-        sizeInBytes: file.size
-      });
-
+      let processedFile = file;  // Initialize variable
+      
       if (file.size > 25 * 1024 * 1024) {
-        toast.loading('Compressing audio file with minimum quality...');
-        compressedBlob = await compressAudioFile(file, { quality: 'minimum' });
-        
-        // Log compressed file details
-        console.log('Compressed file details:', {
-          size: `${(compressedBlob.size / (1024 * 1024)).toFixed(2)} MB`,
-          sizeInBytes: compressedBlob.size,
-          compressionRatio: `${((1 - (compressedBlob.size / file.size)) * 100).toFixed(2)}%`
-        });
-
-        // Show compression results to user
-        toast.success(`Compression complete: ${((1 - (compressedBlob.size / file.size)) * 100).toFixed(2)}% reduction`);
+        setProcessingState('compressing');
+        toast.loading('Compressing audio file...');
+        processedFile = await compressAudioFile(
+          file, 
+          { quality: 'minimum' },
+          (progress) => setCompressionProgress(progress)
+        );
       }
 
-      if (compressedBlob.size > 25 * 1024 * 1024) {
-        console.log('File still too large after compression:', {
-          finalSize: `${(compressedBlob.size / (1024 * 1024)).toFixed(2)} MB`,
-          maxAllowedSize: '25 MB'
-        });
-        throw new Error('File still too large after compression. Please use a shorter recording.');
-      }
-
-      onAudioRecorded(compressedBlob);
+      setProcessingState('transcribing');
+      await onAudioRecorded(processedFile);
+      toast.success('Processing complete!');
     } catch (error) {
       console.error('File processing error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to process audio file');
     } finally {
-      setIsProcessing(false);
+      setProcessingState('idle');
+      setCompressionProgress(0);
       event.target.value = '';
     }
   }, [onAudioRecorded]);
@@ -314,6 +291,38 @@ const startRecording = useCallback(async () => {
             </label>
           </div>
         </div>
+      </div>
+      {processingState !== 'idle' && (
+        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500" />
+            <span className="text-blue-700">
+              {processingState === 'compressing' ? (
+                <>
+                  Compressing audio ({compressionProgress.toFixed(0)}%)
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                      style={{ width: `${compressionProgress}%` }} 
+                    />
+                  </div>
+                </>
+              ) : (
+                'Transcribing audio...'
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* File size warning */}
+      <div className="text-sm text-gray-600 mt-2">
+        Maximum file size: 25MB
+        {selectedFile && (
+          <span className="ml-2">
+            (Current: {(selectedFile.size / (1024 * 1024)).toFixed(2)}MB)
+          </span>
+        )}
       </div>
     </div>
   )

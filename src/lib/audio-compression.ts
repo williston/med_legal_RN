@@ -15,7 +15,8 @@ interface CompressionOptions {
   
   export const compressAudioFile = async(
     file: File, 
-    options: CompressionOptions = { quality: 'minimum' }
+    options: CompressionOptions = { quality: 'minimum' },
+    onProgress?: (progress: number) => void
   ): Promise<File> => {
     const ffmpeg = new FFmpeg();
     const profile = COMPRESSION_PROFILES[options.quality];
@@ -41,7 +42,7 @@ interface CompressionOptions {
   
       // Add progress logging
       ffmpeg.on('progress', ({ progress }) => {
-        console.log(`Compression progress: ${(progress * 100).toFixed(2)}%`);
+        onProgress?.(progress * 100);
       });
   
       console.log('Starting compression...');
