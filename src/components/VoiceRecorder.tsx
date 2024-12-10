@@ -224,9 +224,9 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
 
   return (
     <div>
-      <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <h3 className="font-bold text-gray-800 mb-2">Recording Requirements</h3>
-        <ul className="text-sm text-gray-700 space-y-1">
+      <div className="mb-4 p-4 bg-neutral-50 border border-neutral-200 rounded-md">
+        <h3 className="font-semibold text-law-blue-800 mb-2">Recording Requirements</h3>
+        <ul className="text-sm text-neutral-600 space-y-1">
           <li>• Supported formats: MP3, WAV, WebM</li>
           <li>• Maximum file size: 25MB</li>
           <li>• Files over 25MB will be automatically compressed</li>
@@ -237,96 +237,87 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
           )}
         </ul>
       </div>
-      <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h3 className="font-bold text-yellow-800">Important Notice</h3>
-        <p className="text-sm text-yellow-700">
+      
+      <div className="mb-4 p-4 bg-law-blue-50 border border-law-blue-200 rounded-md">
+        <h3 className="font-semibold text-law-blue-800 mb-2">Legal Notice</h3>
+        <p className="text-sm text-neutral-700 leading-relaxed">
           This tool is for professional documentation purposes. 
-          DO NOT include any protected health information (PHI):
-          • No patient names, ages, or dates of birth
-          • No room numbers or locations
-          • No specific medical record details
-          • No unique identifying characteristics
+          Ensure compliance with privacy regulations:
+          • Exclude all protected health information (PHI)
+          • Maintain patient confidentiality
+          • Use professional terminology
+          • Focus on objective observations
         </p>
       </div>
-      <div className="flex flex-col items-center space-y-4 p-6 bg-blue-50 rounded-lg shadow-md">
+
+      <div className="flex items-center justify-center space-x-4 p-6 bg-white rounded-md shadow-sm">
+        <button 
+          onClick={toggleRecording}
+          className={`w-14 h-14 flex items-center justify-center rounded-md focus:outline-none
+            ${isRecording 
+              ? 'bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-300' 
+              : 'bg-law-blue-600 hover:bg-law-blue-700 focus:ring-2 focus:ring-law-blue-300'
+            }`}
+          aria-label={isRecording ? "Stop Recording" : "Start Recording"}
+        >
+          {isRecording ? (
+            <Square className="w-8 h-8 text-white" />
+          ) : (
+            <Mic className="w-8 h-8 text-white" />
+          )}
+        </button>
+        <span className="text-lg font-medium text-teal-700">
+          {isRecording ? "End" : "Start"}
+        </span>
+
         {isRecording && (
-          <div className="text-3xl font-bold text-teal-600" aria-live="polite">
-            {formatTime(timer)}
-          </div>
-        )}
-        <div className="flex items-center space-x-6">
           <button 
-            onClick={toggleRecording}
+            onClick={togglePause}
             className={cn(
-              "w-16 h-16 flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-offset-2",
-              isRecording 
-                ? "bg-red-500 hover:bg-red-600 focus:ring-red-300" 
-                : "bg-teal-500 hover:bg-teal-600 focus:ring-teal-300",
+              "w-12 h-12 flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-300",
+              "bg-blue-400 hover:bg-blue-500",
               "transition-all duration-300 ease-in-out transform hover:scale-105",
-              "rounded-tl-2xl rounded-br-2xl shadow-lg",
+              "rounded-full shadow-lg",
               "border-4 border-white"
             )}
-            aria-label={isRecording ? "Stop Recording" : "Start Recording"}
+            disabled={!isRecording}
+            aria-label={isPaused ? "Resume Recording" : "Pause Recording"}
           >
-            {isRecording ? (
-              <Square className="w-8 h-8 text-white" />
+            {isPaused ? (
+              <Play className="w-6 h-6 text-white" />
             ) : (
-              <Mic className="w-8 h-8 text-white" />
+              <Pause className="w-6 h-6 text-white" />
             )}
           </button>
-          <span className="text-lg font-medium text-teal-700">
-            {isRecording ? "End" : "Start"}
-          </span>
+        )}
 
-          {isRecording && (
-            <button 
-              onClick={togglePause}
-              className={cn(
-                "w-12 h-12 flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-300",
-                "bg-blue-400 hover:bg-blue-500",
-                "transition-all duration-300 ease-in-out transform hover:scale-105",
-                "rounded-full shadow-lg",
-                "border-4 border-white"
-              )}
-              disabled={!isRecording}
-              aria-label={isPaused ? "Resume Recording" : "Pause Recording"}
-            >
-              {isPaused ? (
-                <Play className="w-6 h-6 text-white" />
-              ) : (
-                <Pause className="w-6 h-6 text-white" />
-              )}
-            </button>
+        <div className="relative">
+          <input
+            type="file"
+            accept="audio/*"
+            onChange={handleFileUpload}
+            className="hidden"
+            id="audio-upload"
+            disabled={isProcessing}
+          />
+          {isProcessing && (
+            <div className="text-sm text-gray-600">
+              Processing audio file...
+            </div>
           )}
-
-          <div className="relative">
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="audio-upload"
-              disabled={isProcessing}
-            />
-            {isProcessing && (
-              <div className="text-sm text-gray-600">
-                Processing audio file...
-              </div>
+          <label
+            htmlFor="audio-upload"
+            className={cn(
+              "w-12 h-12 flex items-center justify-center cursor-pointer",
+              "bg-teal-500 hover:bg-teal-600",
+              "transition-all duration-300 ease-in-out transform hover:scale-105",
+              "rounded-full shadow-lg",
+              "border-4 border-white",
+              "focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-teal-300"
             )}
-            <label
-              htmlFor="audio-upload"
-              className={cn(
-                "w-12 h-12 flex items-center justify-center cursor-pointer",
-                "bg-teal-500 hover:bg-teal-600",
-                "transition-all duration-300 ease-in-out transform hover:scale-105",
-                "rounded-full shadow-lg",
-                "border-4 border-white",
-                "focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-teal-300"
-              )}
-            >
-              <Upload className="w-6 h-6 text-white" />
-            </label>
-          </div>
+          >
+            <Upload className="w-6 h-6 text-white" />
+          </label>
         </div>
       </div>
       {processingState !== 'idle' && (

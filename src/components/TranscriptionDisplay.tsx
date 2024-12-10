@@ -49,39 +49,29 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
   }, []);
 
   return (
-    <div className="bg-blue-50 rounded-lg shadow-md p-6 mt-6 relative">
+    <div className="bg-law-blue-50 rounded-lg p-6 mt-6">
       <div className="relative">
-        <div 
-          className="flex items-center mb-4 hover:opacity-80 transition-opacity duration-200 w-fit"
-          onMouseEnter={handleMouseEnter}
-        >
-          <FileText className="w-6 h-6 text-teal-600 mr-2" />
-          <h2 className="text-2xl font-bold text-teal-700">Medical Legal Documentation</h2>
+        <div className="flex items-center mb-4">
+          <FileText className="w-5 h-5 text-law-blue-600 mr-2" />
+          <h2 className="text-xl font-semibold text-law-blue-800">
+            Legal Documentation
+          </h2>
         </div>
 
-        {/* Popup */}
         {showPopup && (
-          <div 
-            className={`absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg 
-              border-2 border-teal-500 w-80 z-50 transition-all duration-300 ease-in-out ${
-                isExiting 
-                  ? 'opacity-0 transform -translate-y-2' 
-                  : 'opacity-100 transform translate-y-0'
-              }`}
-          >
-            <button
-              onClick={handleClosePopup}
-              className="absolute top-2 right-2 p-1 rounded-full hover:bg-teal-50 
-                transition-colors duration-200 text-teal-600 hover:text-teal-700"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="bg-teal-50 rounded-lg p-4">
-              <h3 className="text-lg font-bold text-teal-700 mb-2">
-                Documentation Instructions
+          <div className={`absolute top-full left-0 mt-2 bg-white rounded-md shadow-xl 
+            border border-law-blue-200 w-80 z-50 transition-all duration-300 ease-in-out ${
+              isExiting 
+                ? 'opacity-0 transform -translate-y-2' 
+                : 'opacity-100 transform translate-y-0'
+            }`}>
+            <div className="p-4">
+              <h3 className="text-lg font-semibold text-law-blue-800 mb-2">
+                Documentation Guidelines
               </h3>
-              <p className="font-serif text-lg text-gray-500">
-                Record or type your medical legal observations. Focus on objective findings and relevant details for legal documentation.
+              <p className="text-neutral-600 leading-relaxed">
+                Focus on objective findings and relevant details for legal documentation.
+                Maintain professional terminology and clarity.
               </p>
             </div>
           </div>
@@ -91,23 +81,12 @@ export function TranscriptionDisplay({ transcription, onTranscriptionChange }: T
       <Textarea
         value={transcription}
         onChange={(e) => onTranscriptionChange(e.target.value)}
-        className="w-full min-h-[12rem] p-4 border-4 border-white rounded-tl-2xl rounded-br-2xl font-serif text-lg text-gray-700 bg-white shadow-inner focus:ring-4 focus:ring-teal-300 focus:border-teal-500 transition-all duration-300 ease-in-out"
-        placeholder="Your medical legal documentation will appear here..."
+        className="w-full min-h-[12rem] p-4 border border-law-blue-200 rounded-md
+          font-serif text-lg text-neutral-800 bg-white shadow-sm
+          focus:ring-2 focus:ring-law-blue-300 focus:border-law-blue-300
+          transition-all duration-300 ease-in-out"
+        placeholder="Enter your medical legal documentation here..."
       />
-      <div className="absolute bottom-3 right-3 text-sm text-gray-400">
-        {transcription.length} characters
-      </div>
-
-      <TooltipPrimitive.Provider>
-        <TooltipPrimitive.Root>
-          <TooltipPrimitive.Trigger asChild>
-            <InfoIcon className="w-4 h-4 text-gray-400" />
-          </TooltipPrimitive.Trigger>
-          <TooltipPrimitive.Content className="bg-white p-2 rounded shadow-lg">
-            {helpText.recording}
-          </TooltipPrimitive.Content>
-        </TooltipPrimitive.Root>
-      </TooltipPrimitive.Provider>
     </div>
   )
 }

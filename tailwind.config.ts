@@ -10,6 +10,30 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+			'law-blue': {
+          50: '#F0F4F8',
+          100: '#D9E2EC',
+          200: '#BCCCDC',
+          300: '#9FB3C8',
+          400: '#829AB1',
+          500: '#627D98',
+          600: '#486581',
+          700: '#334E68',
+          800: '#243B53',
+          900: '#102A43',
+        },
+        'neutral': {
+          50: '#F5F7FA',
+          100: '#E4E7EB',
+          200: '#CBD2D9',
+          300: '#9AA5B1',
+          400: '#7B8794',
+          500: '#616E7C',
+          600: '#52606D',
+          700: '#3E4C59',
+          800: '#323F4B',
+          900: '#1F2933',
+        },
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

@@ -60,34 +60,30 @@ export default function Contact() {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 to-teal-50 ${fredoka.className}`}>
+    <div className="min-h-screen bg-law-blue-50">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-12">
-            <h1 className={`text-4xl font-bold text-teal-700 mb-4 ${caveat.className}`}>
-              Get in Touch
+            <h1 className="text-3xl font-bold text-law-blue-900 mb-4">
+              Contact Us
             </h1>
-            <p className="text-gray-600">
-              Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
+            <p className="text-neutral-600">
+              For inquiries about our medical legal documentation services, please reach out to our team.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Contact Information */}
             <div className="space-y-8">
               <ContactInfo 
                 icon={<Mail className="w-5 h-5" />}
                 title="Email"
-                details="rnsync@gmail.com"
-                //link="mailto:support@sbarvoice.com"
+                details="contact@medlegalscribe.com"
               />
             </div>
 
-            {/* Contact Form */}
             <form 
               onSubmit={handleSubmit(onSubmit)} 
-              className="md:col-span-2 bg-white rounded-lg shadow-md p-6 space-y-6"
+              className="md:col-span-2 bg-white rounded-md shadow-sm border border-neutral-200 p-6 space-y-6"
             >
               {/* Status Messages */}
               {submitStatus === 'success' && (
@@ -173,11 +169,11 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full px-6 py-3 rounded-lg font-semibold text-white 
+                className={`w-full px-6 py-3 rounded-md font-medium text-white 
                   ${isSubmitting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600'
-                  } transition-all duration-300 flex items-center justify-center gap-2`}
+                    ? 'bg-neutral-400 cursor-not-allowed' 
+                    : 'bg-law-blue-700 hover:bg-law-blue-800'
+                  } transition-all duration-200 flex items-center justify-center gap-2`}
               >
                 {isSubmitting ? (
                   <>

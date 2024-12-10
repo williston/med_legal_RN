@@ -112,61 +112,56 @@ export default function Home() {
 
 
   return (
-    <div className={`min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-teal-50 ${fredoka.className}`}>
+    <div className={`min-h-screen flex flex-col bg-law-blue-50 ${fredoka.className}`}>
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto relative">
-          <div className="relative mb-4">
+        <div className="max-w-4xl mx-auto relative">
+          <div className="relative mb-6">
             {user && (
               <>
-                <h2 className={`text-3xl text-teal-600 text-center ${caveat.className} animate-fade-in-down`}>
-                  Welcome, {user.firstName || user.username || 'there'}!
+                <h2 className="text-2xl text-law-blue-700 text-center font-semibold">
+                  Welcome, {user.firstName || user.username || 'there'}
                 </h2>
               </>
             )}
           </div>
-          <h1 className="text-4xl font-bold mb-8 text-teal-700 text-center animate-fade-in-up">
+          <h1 className="text-3xl font-bold mb-6 text-law-blue-900 text-center">
             Medical Legal Documentation Assistant
           </h1>
-          <p className="text-gray-600">
-            Create professional medical legal documentation efficiently. 
-            Record or type your observations and let AI help structure your report.
-          </p>
-          <div className="space-y-8">
+          <div className="bg-white shadow-lg rounded-lg p-8 mb-8">
+            <p className="text-neutral-700 text-lg mb-6 leading-relaxed">
+              Create professional medical legal documentation efficiently. 
+              Record or type your observations and let AI help structure your report.
+            </p>
+            
             <VoiceRecorder 
               onAudioRecorded={handleAudioRecorded}
               onRecordingStart={handleRecordingStart}
             />
+            
             <TranscriptionDisplay 
               transcription={transcription}
               onTranscriptionChange={handleTranscriptionChange}
             />
-            {/* <TemplateSelector 
-              onTemplateSelect={handleTemplateSelect}
-            /> */}
-            <div className="flex justify-center">
+            
+            <div className="flex justify-center mt-8">
               <button 
                 onClick={handleAnalyzeTranscription}
-                className={`px-6 py-3 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                    !isAnalyzing
-                    ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white hover:from-teal-500 hover:to-blue-600 focus:ring-teal-300' 
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
+                className={`px-6 py-3 rounded-md flex items-center justify-center transition-all duration-300 
+                  ${!isAnalyzing
+                    ? 'bg-law-blue-700 text-white hover:bg-law-blue-800 focus:ring-2 focus:ring-law-blue-300 focus:ring-offset-2' 
+                    : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
+                  }`}
                 disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
                   <>
                     <FaSpinner className="animate-spin mr-2" />
-                    Analyzing...
-                  </>
-                ) : selectedTemplate !== 1 ? (
-                  <>
-                    <Wand2 className="mr-2 animate-pulse" />
-                    Analyze Transcription
+                    Processing...
                   </>
                 ) : (
                   <>
-                    <Wand2 className="mr-2 animate-pulse" />
-                    Analyze Transcription
+                    <Wand2 className="mr-2" />
+                    Generate Legal Report
                   </>
                 )}
               </button>
