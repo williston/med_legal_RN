@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Mic, Square, Pause, Play, Upload } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { compressAudioFile } from '@/lib/audio-compression'
 
 interface VoiceRecorderProps {
   onAudioRecorded: (audioBlob: Blob) => void;
@@ -18,6 +19,7 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
   const audioChunksRef = useRef<Blob[]>([])
   const streamRef = useRef<MediaStream | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // VoiceRecorder.tsx
 const startRecording = useCallback(async () => {
@@ -163,46 +165,60 @@ const startRecording = useCallback(async () => {
   }, [timer, stopRecording])
 
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Add immediate feedback that the function is called
-    console.log('Upload button clicked');
-    toast.success('Upload button clicked');
-
     const file = event.target.files?.[0];
     if (!file) {
-      console.log('No file selected');
       toast.error('No file selected');
       return;
     }
 
-    console.log('File selected:', { 
-      name: file.name, 
-      type: file.type, 
-      size: file.size 
-    });
-
-    // Check if file is audio
     if (!file.type.startsWith('audio/')) {
       toast.error('Please upload an audio file');
       return;
     }
 
-    // Check file size (e.g., 25MB limit)
-    if (file.size > 25 * 1024 * 1024) {
-      toast.error('File size must be less than 25MB');
-      return;
-    }
-
     try {
-      console.log('Sending file to onAudioRecorded');
-      onAudioRecorded(file);
-      toast.success('Audio file uploaded successfully');
-    } catch (error) {
-      console.error('File upload error:', error);
-      toast.error('Failed to process audio file');
-    }
+      setIsProcessing(true);
+      let compressedBlob = file;
 
-    // Clear the input so the same file can be uploaded again
-    event.target.value = '';
+      // Log original file details
+      console.log('Original file details:', {
+        name: file.name,
+        type: file.type,
+        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+        sizeInBytes: file.size
+      });
+
+      if (file.size > 25 * 1024 * 1024) {
+        toast.loading('Compressing audio file with minimum quality...');
+        compressedBlob = await compressAudioFile(file, { quality: 'minimum' });
+        
+        // Log compressed file details
+        console.log('Compressed file details:', {
+          size: `${(compressedBlob.size / (1024 * 1024)).toFixed(2)} MB`,
+          sizeInBytes: compressedBlob.size,
+          compressionRatio: `${((1 - (compressedBlob.size / file.size)) * 100).toFixed(2)}%`
+        });
+
+        // Show compression results to user
+        toast.success(`Compression complete: ${((1 - (compressedBlob.size / file.size)) * 100).toFixed(2)}% reduction`);
+      }
+
+      if (compressedBlob.size > 25 * 1024 * 1024) {
+        console.log('File still too large after compression:', {
+          finalSize: `${(compressedBlob.size / (1024 * 1024)).toFixed(2)} MB`,
+          maxAllowedSize: '25 MB'
+        });
+        throw new Error('File still too large after compression. Please use a shorter recording.');
+      }
+
+      onAudioRecorded(compressedBlob);
+    } catch (error) {
+      console.error('File processing error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to process audio file');
+    } finally {
+      setIsProcessing(false);
+      event.target.value = '';
+    }
   }, [onAudioRecorded]);
 
   return (
@@ -276,7 +292,13 @@ const startRecording = useCallback(async () => {
               onChange={handleFileUpload}
               className="hidden"
               id="audio-upload"
+              disabled={isProcessing}
             />
+            {isProcessing && (
+              <div className="text-sm text-gray-600">
+                Processing audio file...
+              </div>
+            )}
             <label
               htmlFor="audio-upload"
               className={cn(
