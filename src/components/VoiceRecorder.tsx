@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast'
 import { compressAudioFile } from '@/lib/audio-compression'
 
 interface VoiceRecorderProps {
-  onAudioRecorded: (audioBlob: Blob) => void;
+  onAudioRecorded: (audioBlob: Blob, fileName?: string) => void;
   onRecordingStart?: () => void;
 }
 
@@ -90,7 +90,7 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
         });
         
         console.log('Created file:', { name: file.name, type: file.type, size: file.size });
-        onAudioRecorded(file);
+        onAudioRecorded(file, `Recording ${new Date().toLocaleTimeString()}`);
       };
 
       mediaRecorder.start(1000); // Smaller chunks for iOS
@@ -209,7 +209,7 @@ export function VoiceRecorder({ onAudioRecorded, onRecordingStart }: VoiceRecord
       }
 
       setProcessingState('transcribing');
-      await onAudioRecorded(processedFile);
+      await onAudioRecorded(processedFile, file.name);
       toast.success('Processing complete!');
     } catch (error) {
       console.error('File processing error:', error);

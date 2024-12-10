@@ -15,14 +15,30 @@ import { saveAs } from 'file-saver'
 const caveat = Caveat({ subsets: ['latin'] })
 const fredoka = Fredoka({ subsets: ['latin'] })
 
+interface FileHistory {
+  name: string;
+  timestamp: string;
+  status: 'completed' | 'failed';
+}
+
 export default function Home() {
   const { user } = useUser()
   const router = useRouter()
   const [transcription, setTranscription] = useState('')
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [fileHistory, setFileHistory] = useState<FileHistory[]>([]);
 
-  const handleAudioRecorded = useCallback(async (audioBlob: Blob) => {
+  const handleAudioRecorded = useCallback(async (audioBlob: Blob, fileName?: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const displayName = fileName || `Recording ${timestamp}`;
+    
+    setFileHistory(prev => [...prev, {
+      name: displayName,
+      timestamp,
+      status: 'completed'
+    }]);
+
     console.log('handleAudioRecorded called with:', {
       type: audioBlob.type,
       size: audioBlob.size
@@ -55,7 +71,18 @@ export default function Home() {
       console.log('Transcription successful:', data);
       setTranscription((prevTranscription) => prevTranscription + '\n' + data.transcription);
       toast.success('Audio transcribed successfully');
+      
+      setFileHistory(prev => prev.map(file => 
+        file.name === displayName 
+          ? { ...file, status: 'completed' }
+          : file
+      ));
     } catch (error) {
+      setFileHistory(prev => prev.map(file => 
+        file.name === displayName 
+          ? { ...file, status: 'failed' }
+          : file
+      ));
       console.error('Transcription error:', error);
       toast.error('Failed to transcribe audio')
     }
@@ -166,6 +193,33 @@ export default function Home() {
                 )}
               </button>
             </div>
+            
+            {fileHistory.length > 0 && (
+              <div className="mt-4 p-4 bg-neutral-50 rounded-md">
+                <h3 className="text-sm font-semibold text-neutral-700 mb-2">
+                  Processed Files:
+                </h3>
+                <ul className="space-y-1">
+                  {fileHistory.map((file, index) => (
+                    <li 
+                      key={`${file.name}-${index}`}
+                      className="text-sm flex items-center justify-between"
+                    >
+                      <span className="text-neutral-600">
+                        {file.name}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        file.status === 'completed' 
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {file.status}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </main>
